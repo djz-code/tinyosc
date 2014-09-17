@@ -23,6 +23,7 @@
 #include <stdarg.h>
 #include <string.h>
 
+#ifndef htonll
 static uint64_t htonll(uint64_t m) {
   uint64_t n;
   int32_t *p = (int32_t *) &n;
@@ -30,8 +31,11 @@ static uint64_t htonll(uint64_t m) {
   *(p + 1) = htonl((int32_t) m);
   return n;
 }
+#endif
 
+#ifndef ntohll
 #define ntohll(x) htonll(x)
+#endif
 
 static void osc_advance(char **p, int d, int *n, int clear) {
   *p += d;
@@ -150,7 +154,7 @@ int osc_unpack_message(const osc_packet *packet,
   osc_advance(&p, n, &nleft, 0);
   const char *t;
   int32_t *ip;
-  float *fp;
+//  float *fp;
   char *sp;
   va_list ap;
   va_start(ap, types);
