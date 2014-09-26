@@ -93,11 +93,11 @@ int osc_pack_message(osc_packet *packet, int capacity,
   capacity = (capacity / 4) * 4;  // capacity is now a multipe of 4.
   int nleft = capacity;
   char *p = packet->data;
-  int addrlen = strlen(address);
+  int addrlen = (int)strlen(address);
   if (addrlen < 1 || address[0] != '/') return -1;
   if (osc_append_bytes(&p, addrlen + 1, address, &nleft)) return -1;
   if (osc_append_char(&p, ',', &nleft)) return -1;
-  if (osc_append_bytes(&p, strlen(types) + 1, types, &nleft)) return -1;
+  if (osc_append_bytes(&p, (int)strlen(types) + 1, types, &nleft)) return -1;
   int32_t iv;
   float fv;
   const char *sv;
@@ -118,7 +118,7 @@ int osc_pack_message(osc_packet *packet, int capacity,
         break;
       case 's':  // OSC-string
         sv = va_arg(ap, const char *);
-        iv = strlen(sv) + 1;  // Count terminating \0 character.
+        iv = (int)strlen(sv) + 1;  // Count terminating \0 character.
         if (osc_append_bytes(&p, iv, sv, &nleft)) return -1;
         break;
       case 'b':  // OSC-blob
@@ -141,13 +141,13 @@ int osc_unpack_message(const osc_packet *packet,
   int nleft = packet->size;
   if (nleft & 0x03) return -1;
   char *p = packet->data;
-  int n = strnlen(p, nleft) + 1;
+  int n = (int)strnlen(p, nleft) + 1;
   if (nleft < n) return -1;  // Seriously malformed packet.
   if (osc_is_bundle(packet)) return -1;
   if (!pattern_matches(p, address)) return -1;
   osc_advance(&p, n, &nleft, 0);
   if (nleft == 0) return types[0] ? -1 : 0;  // Support missing type tag string.
-  n = strnlen(types, nleft) + 2;
+  n = (int)strnlen(types, nleft) + 2;
   if (nleft < n) return -1;
   if (*p != ',') return -1;
   if (strncmp(p + 1, types, n - 1)) return -1;
@@ -168,7 +168,7 @@ int osc_unpack_message(const osc_packet *packet,
         break;
       case 's':  // OSC-string
         sp = va_arg(ap, char *);
-        n = strnlen(p, nleft) + 1;
+        n = (int)strnlen(p, nleft) + 1;
         if (osc_get_bytes(&p, n, sp, &nleft)) return -1;
         break;
       case 'b':  // OSC-blob
@@ -290,7 +290,7 @@ int osc_message_to_string(char *s, int capacity, const osc_packet *message) {
         n += 4;
         break;
       case 's':
-        v = strnlen(message->data + n, capacity - c) + 1;
+        v = (int)strnlen(message->data + n, capacity - c) + 1;
         c += snprintf(s + c, capacity - c, " s:%s", message->data + n);
         n += v;
         break;
