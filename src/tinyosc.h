@@ -25,6 +25,10 @@
 #ifndef __TINYOSC_H__
 #define __TINYOSC_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -137,4 +141,8 @@ int osc_next_packet_from_bundle(const osc_packet *bundle, osc_packet *current);
 // Note that this function only accepts OSC _messages_, not bundles.
 int osc_message_to_string(char *s, int capacity, const osc_packet *message);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
