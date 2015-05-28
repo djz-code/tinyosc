@@ -154,7 +154,6 @@ int osc_unpack_message(const osc_packet *packet,
   osc_advance(&p, n, &nleft, 0);
   const char *t;
   int32_t *ip;
-//  float *fp;
   char *sp;
   va_list ap;
   va_start(ap, types);
